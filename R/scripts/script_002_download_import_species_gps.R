@@ -42,7 +42,8 @@ pacman::p_load(
   InformationValue,
   caret, 
   terra,
-  geodata
+  geodata,
+  usdm
 )
 
 
@@ -93,16 +94,16 @@ theme_opts <- list(
 # - Pick the option that works for you 
 
 # Option #1: Download species occurrences (GPS) from GBIF 
-set.seed(2012)
-sp_gps <- geodata::sp_occurrence(
-  genus = "Senecio", 
-  species = "madagascariensis", 
-  download = TRUE,
-  geo = TRUE,
-  removeZeros = TRUE,
-  nrecs = 2000    # Only download 2000 GPS - remove this for a proper analysis
-)
-head(sp_gps)
+# set.seed(2012)
+# sp_gps <- geodata::sp_occurrence(
+#   genus = "Senecio", 
+#   species = "madagascariensis", 
+#   download = TRUE,
+#   geo = TRUE,
+#   removeZeros = TRUE,
+#   nrecs = 2000    # Only download 2000 GPS - remove this for a proper analysis
+# )
+# head(sp_gps)
 
 
 # Option #2: Alternatively, we could import a csv file containing GPS data 
@@ -121,6 +122,11 @@ sp_data <- sp_gps %>%
     lat, 
     country
   )
+head(sp_data)
+
+# Remove duplicate GPS data 
+sp_data <- sp_data %>%
+  dplyr::distinct(lon, lat, .keep_all= TRUE)
 head(sp_data)
 
 # Get world map 
@@ -171,7 +177,6 @@ ggplot() +
     crs = 4326,
     expand = FALSE
   )
-
 
 
 

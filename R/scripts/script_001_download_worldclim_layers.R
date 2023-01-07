@@ -42,7 +42,8 @@ pacman::p_load(
   InformationValue,
   caret, 
   terra,
-  geodata
+  geodata,
+  usdm
 )
 
 
@@ -90,20 +91,31 @@ theme_opts <- list(
 #   of your choice (given using 'path = ...' below)
 # - Raster layers are stored as 'SpatRaster' so they are compatible with the 
 #   'terra' R package 
-wc_current <- geodata::worldclim_global(
-  var = "bio", 
-  res = 2.5,      # Minute degree resolution of raster layers 
-  path = here::here("./data/environmental_layers/current/"), 
-  version = "2.1"
-  )
+
+# -------- Uncomment this code to download WORLDCLIM layers -----------
+# wc_current <- geodata::worldclim_global(
+#   var = "bio", 
+#   res = 2.5,      # Minute degree resolution of raster layers 
+#   path = here::here("./data/environmental_layers/current/"), 
+#   version = "2.1"
+#   )
+
+# Load the WORLDCLIM rasters layers we already have downloaded 
+# - We don't need to run the download code above each new R session 
+predictors <- terra::rast(list.files(
+      here::here("./data/environmental_layers/current/wc2.1_2.5m/"),
+      full.names = TRUE,
+      pattern = '.tif'
+    ))
+
 
 # Plot each of the 19 WORLDCLIM layers to check they imported correctly 
-terra::plot(wc_current)
+terra::plot(predictors)
 
 # Set the CRS projection for the current climate layers 
 # - Use the correct wkt CRS format - no more PROJ4 strings! 
-terra::crs(wc_current) <- "epsg:4326"
-terra::crs(wc_current, describe = T)
+terra::crs(predictors) <- "epsg:4326"
+terra::crs(predictors, describe = T)
 
 
 
